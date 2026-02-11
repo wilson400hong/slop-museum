@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Slop Museum
+
+Celebrate the Imperfect — 頌揚不完美的創造
+
+一個專門收藏和展示 AI/Vibe Coding 時代「半成品」的數位博物館。
+
+## Prerequisites
+
+- **Node.js >= 20** (required by Next.js 14)
+- A [Supabase](https://supabase.com) project
+
+If you use nvm, switch to Node 20:
+
+```bash
+nvm install 20
+nvm use 20
+```
+
+To set Node 20 as your default:
+
+```bash
+nvm alias default 20
+```
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Set up environment variables
+
+Copy the example file and fill in your Supabase credentials:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Edit `.env.local` with your values (found in Supabase → Settings → API):
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+```
+
+### 3. Set up the database
+
+Go to your Supabase project → **SQL Editor**, paste the contents of `supabase/migration.sql`, and run it. This creates all tables, indexes, RLS policies, triggers, seed data, and storage buckets.
+
+### 4. Enable OAuth providers
+
+In your Supabase dashboard → **Authentication** → **Providers**:
+
+- Enable **Google** and add your Google Cloud Console OAuth credentials
+- Enable **GitHub** and add your GitHub OAuth App credentials
+- Under **URL Configuration**, add `http://localhost:3000/auth/callback` to Redirect URLs
+
+### 5. Run the dev server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploying to Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Push your code to GitHub
+2. Import the repo on [vercel.com](https://vercel.com)
+3. Add the 3 environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`)
+4. Deploy
+5. Update your Supabase **Site URL** and **Redirect URLs** to match your Vercel production URL
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 14 (App Router, TypeScript) |
+| UI | Tailwind CSS + shadcn/ui |
+| Backend | Supabase (PostgreSQL, Auth, Storage) |
+| Deployment | Vercel |
