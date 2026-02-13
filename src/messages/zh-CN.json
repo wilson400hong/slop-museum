@@ -60,7 +60,10 @@
     "tagRequired": "请至少选择 1 个标签",
     "urlRequired": "请输入作品 URL",
     "submitSuccess": "作品提交成功！",
-    "submitFailed": "提交失败"
+    "submitFailed": "提交失败",
+    "autoDetect": "自动检测",
+    "detecting": "检测中...",
+    "noOgImage": "未找到预览图"
   },
   "Reactions": {
     "loginRequired": "请先登录",
@@ -69,7 +72,8 @@
     "mind_blown": "脑洞大开",
     "cool": "很酷",
     "wtf": "这啥？",
-    "promising": "有潜力"
+    "promising": "有潜力",
+    "anonymousReaction": "匿名反应"
   },
   "Bookmark": {
     "loginRequired": "请先登录",
@@ -106,7 +110,9 @@
     "workHidden": "作品已下架",
     "workDeleted": "作品已删除",
     "reportDismissed": "举报已驳回",
-    "actionFailed": "操作失败"
+    "actionFailed": "操作失败",
+    "banUser": "封禁用户",
+    "userBanned": "用户已被封禁"
   },
   "CodeEditor": {
     "livePreview": "实时预览"
@@ -129,6 +135,11 @@
     "music": "音乐",
     "useless": "没用",
     "funny": "搞笑"
+  },
+  "Theme": {
+    "light": "浅色",
+    "dark": "深色",
+    "system": "系统"
   },
   "NotFound": {
     "title": "页面不存在",

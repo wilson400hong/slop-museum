@@ -3,6 +3,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isMockMode, mockDb } from '@/lib/mock-db';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
+import sharp from 'sharp';
+
+async function compressImage(buffer: Buffer, mimeType: string): Promise<{ data: Buffer; ext: string; contentType: string }> {
+  // Skip compression for GIFs to preserve animation
+  if (mimeType === 'image/gif') {
+    return { data: buffer, ext: 'gif', contentType: 'image/gif' };
+  }
+
+  const processed = await sharp(buffer)
+    .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
+    .webp({ quality: 80 })
+    .toBuffer();
+
+  return { data: processed, ext: 'webp', contentType: 'image/webp' };
+}
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData();
@@ -32,17 +47,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const ext = file.name.split('.').pop() || 'png';
+    const arrayBuffer = await file.arrayBuffer();
+    const rawBuffer = Buffer.from(arrayBuffer);
+    const { data: compressedBuffer, ext: compressedExt } = await compressImage(rawBuffer, file.type);
     const timestamp = Date.now();
-    const fileName = `${timestamp}.${ext}`;
+    const fileName = `${timestamp}.${compressedExt}`;
 
     // Save to public/uploads/ for local access
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
     const uploadDir = path.join(process.cwd(), 'public', 'uploads', user.id);
     await mkdir(uploadDir, { recursive: true });
     const filePath = path.join(uploadDir, fileName);
-    await writeFile(filePath, buffer);
+    await writeFile(filePath, compressedBuffer);
 
     const url = `/uploads/${user.id}/${fileName}`;
     return NextResponse.json({ url });
@@ -57,17 +72,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const ext = file.name.split('.').pop() || 'png';
-  const fileName = `${user.id}/${Date.now()}.${ext}`;
-
   // Convert File to ArrayBuffer for Node.js compatibility
   const arrayBuffer = await file.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
+  const rawBuffer = Buffer.from(arrayBuffer);
+  const { data: compressedBuffer, ext: compressedExt, contentType } = await compressImage(rawBuffer, file.type);
+  const fileName = `${user.id}/${Date.now()}.${compressedExt}`;
 
   const { data, error } = await supabase.storage
     .from('slop-previews')
-    .upload(fileName, buffer, {
-      contentType: file.type,
+    .upload(fileName, compressedBuffer, {
+      contentType,
       upsert: false,
     });
 

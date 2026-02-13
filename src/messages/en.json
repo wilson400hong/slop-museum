@@ -60,7 +60,10 @@
     "tagRequired": "Please select at least 1 tag",
     "urlRequired": "Please enter a URL",
     "submitSuccess": "Work submitted successfully!",
-    "submitFailed": "Submission failed"
+    "submitFailed": "Submission failed",
+    "autoDetect": "Auto-detect",
+    "detecting": "Detecting...",
+    "noOgImage": "No preview image found"
   },
   "Reactions": {
     "loginRequired": "Please sign in first",
@@ -69,7 +72,8 @@
     "mind_blown": "Mind Blown",
     "cool": "Cool",
     "wtf": "WTF",
-    "promising": "Promising"
+    "promising": "Promising",
+    "anonymousReaction": "React anonymously"
   },
   "Bookmark": {
     "loginRequired": "Please sign in first",
@@ -106,7 +110,9 @@
     "workHidden": "Work hidden",
     "workDeleted": "Work deleted",
     "reportDismissed": "Report dismissed",
-    "actionFailed": "Action failed"
+    "actionFailed": "Action failed",
+    "banUser": "Ban User",
+    "userBanned": "User banned"
   },
   "CodeEditor": {
     "livePreview": "Live Preview"
@@ -129,6 +135,11 @@
     "music": "Music",
     "useless": "Useless",
     "funny": "Funny"
+  },
+  "Theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   },
   "NotFound": {
     "title": "Page Not Found",

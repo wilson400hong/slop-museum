@@ -18,6 +18,7 @@ interface Report {
     title: string;
     preview_image_url: string | null;
     is_hidden: boolean;
+    user_id: string | null;
   };
   reporter: {
     display_name: string;
@@ -37,13 +38,14 @@ export function AdminDashboard({ reports: initialReports }: Props) {
 
   const handleAction = async (
     reportId: string,
-    action: 'hide' | 'delete' | 'dismiss'
+    action: 'hide' | 'delete' | 'dismiss' | 'ban',
+    userId?: string | null
   ) => {
     try {
       const res = await fetch('/api/admin/action', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reportId, action }),
+        body: JSON.stringify({ reportId, action, userId }),
       });
 
       if (!res.ok) throw new Error('Failed');
@@ -55,7 +57,9 @@ export function AdminDashboard({ reports: initialReports }: Props) {
             ? t('workHidden')
             : action === 'delete'
               ? t('workDeleted')
-              : t('reportDismissed'),
+              : action === 'ban'
+                ? t('userBanned')
+                : t('reportDismissed'),
       });
     } catch {
       toast({ title: t('actionFailed'), variant: 'destructive' });
@@ -111,6 +115,15 @@ export function AdminDashboard({ reports: initialReports }: Props) {
                   >
                     {t('dismissReport')}
                   </Button>
+                  {report.slop.user_id && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleAction(report.id, 'ban', report.slop.user_id)}
+                    >
+                      {t('banUser')}
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>

@@ -41,6 +41,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const res = await fetch('/api/mock-auth');
           const data = await res.json();
           if (data.user) {
+            if (data.user.is_banned) {
+              setUser(null);
+              setProfile(null);
+              setLoading(false);
+              return;
+            }
             // Create a fake SupabaseUser-like object
             setUser({ id: data.user.id, email: 'dev@slopmuseum.local' } as SupabaseUser);
             setProfile(data.user);
@@ -77,6 +83,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             .select('*')
             .eq('id', session.user.id)
             .single();
+          if (data?.is_banned) {
+            await supabase.auth.signOut();
+            setUser(null);
+            setProfile(null);
+            setLoading(false);
+            return;
+          }
           setProfile(data);
         }
       } catch (err) {
@@ -100,6 +113,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .select('*')
           .eq('id', session.user.id)
           .single();
+        if (data?.is_banned) {
+          await supabase.auth.signOut();
+          setUser(null);
+          setProfile(null);
+          setLoading(false);
+          return;
+        }
         setProfile(data);
       } else {
         setProfile(null);

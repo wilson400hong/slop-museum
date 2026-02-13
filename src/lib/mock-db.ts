@@ -36,6 +36,7 @@ interface MockData {
   reactions: Reaction[];
   bookmarks: Bookmark[];
   reports: Report[];
+  bannedUserIds: string[];
 }
 
 function loadData(): MockData {
@@ -45,7 +46,7 @@ function loadData(): MockData {
       return JSON.parse(raw);
     }
   } catch {}
-  return { slops: [], slopTags: [], reactions: [], bookmarks: [], reports: [] };
+  return { slops: [], slopTags: [], reactions: [], bookmarks: [], reports: [], bannedUserIds: [] };
 }
 
 function saveData(data: MockData): void {
@@ -223,6 +224,24 @@ export const mockDb = {
       }));
   },
 
+  getUserReactionStats(userId: string): Record<ReactionType, number> {
+    const data = loadData();
+    const userSlopIds = data.slops.filter((s) => s.user_id === userId).map((s) => s.id);
+    const counts: Record<ReactionType, number> = {
+      hilarious: 0,
+      mind_blown: 0,
+      cool: 0,
+      wtf: 0,
+      promising: 0,
+    };
+    data.reactions
+      .filter((r) => userSlopIds.includes(r.slop_id))
+      .forEach((r) => {
+        counts[r.type]++;
+      });
+    return counts;
+  },
+
   // Reactions
   getReactionCounts(slopId: string): Record<ReactionType, number> {
     const data = loadData();
@@ -248,7 +267,7 @@ export const mockDb = {
       .map((r) => r.type);
   },
 
-  toggleReaction(slopId: string, userId: string, type: ReactionType): 'added' | 'removed' {
+  toggleReaction(slopId: string, userId: string, type: ReactionType, isAnonymous?: boolean): 'added' | 'removed' {
     const data = loadData();
     const idx = data.reactions.findIndex(
       (r) => r.slop_id === slopId && r.user_id === userId && r.type === type
@@ -263,7 +282,7 @@ export const mockDb = {
       slop_id: slopId,
       user_id: userId,
       type,
-      is_anonymous: false,
+      is_anonymous: isAnonymous || false,
       created_at: new Date().toISOString(),
     });
     saveData(data);
@@ -323,8 +342,8 @@ export const mockDb = {
         return {
           ...r,
           slop: slop
-            ? { id: slop.id, title: slop.title, preview_image_url: slop.preview_image_url, is_hidden: slop.is_hidden }
-            : { id: r.slop_id, title: '(deleted)', preview_image_url: null, is_hidden: true },
+            ? { id: slop.id, title: slop.title, preview_image_url: slop.preview_image_url, is_hidden: slop.is_hidden, user_id: slop.user_id }
+            : { id: r.slop_id, title: '(deleted)', preview_image_url: null, is_hidden: true, user_id: null },
           reporter: r.reporter_id === DEV_USER_ID
             ? { display_name: DEV_USER.display_name }
             : { display_name: 'Unknown' },
@@ -363,5 +382,18 @@ export const mockDb = {
       data.slops.splice(idx, 1);
       saveData(data);
     }
+  },
+
+  banUser(userId: string): void {
+    const data = loadData();
+    if (!data.bannedUserIds.includes(userId)) {
+      data.bannedUserIds.push(userId);
+      saveData(data);
+    }
+  },
+
+  isUserBanned(userId: string): boolean {
+    const data = loadData();
+    return (data.bannedUserIds || []).includes(userId);
   },
 };

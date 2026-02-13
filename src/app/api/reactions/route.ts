@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    const action = mockDb.toggleReaction(slop_id, user.id, type as ReactionType);
+    const action = mockDb.toggleReaction(slop_id, user.id, type as ReactionType, is_anonymous);
     return NextResponse.json({ action });
   }
 

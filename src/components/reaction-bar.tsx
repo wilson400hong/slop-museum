@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { REACTION_EMOJI } from '@/types';
@@ -27,6 +29,7 @@ export function ReactionBar({ slopId }: Props) {
   });
   const [userReactions, setUserReactions] = useState<string[]>([]);
   const [loading, setLoading] = useState<string | null>(null);
+  const [isAnonymous, setIsAnonymous] = useState(false);
 
   useEffect(() => {
     fetch(`/api/slops/${slopId}/reactions`)
@@ -62,7 +65,7 @@ export function ReactionBar({ slopId }: Props) {
       const res = await fetch('/api/reactions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slop_id: slopId, type }),
+        body: JSON.stringify({ slop_id: slopId, type, is_anonymous: isAnonymous }),
       });
 
       if (!res.ok) {
@@ -79,21 +82,35 @@ export function ReactionBar({ slopId }: Props) {
   };
 
   return (
-    <div className="flex flex-wrap gap-2">
-      {REACTION_TYPES.map((type) => (
-        <Button
-          key={type}
-          variant={userReactions.includes(type) ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => toggleReaction(type)}
-          disabled={loading === type}
-          title={t(type)}
-          className="gap-1"
-        >
-          <span>{REACTION_EMOJI[type]}</span>
-          <span className="text-xs">{counts[type]}</span>
-        </Button>
-      ))}
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap gap-2">
+        {REACTION_TYPES.map((type) => (
+          <Button
+            key={type}
+            variant={userReactions.includes(type) ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => toggleReaction(type)}
+            disabled={loading === type}
+            title={t(type)}
+            className="gap-1"
+          >
+            <span>{REACTION_EMOJI[type]}</span>
+            <span className="text-xs">{counts[type]}</span>
+          </Button>
+        ))}
+      </div>
+      {user && (
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="anonymous-reaction"
+            checked={isAnonymous}
+            onCheckedChange={(checked) => setIsAnonymous(!!checked)}
+          />
+          <Label htmlFor="anonymous-reaction" className="text-xs text-muted-foreground cursor-pointer">
+            {t('anonymousReaction')}
+          </Label>
+        </div>
+      )}
     </div>
   );
 }

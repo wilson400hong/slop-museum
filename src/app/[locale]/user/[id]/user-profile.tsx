@@ -5,7 +5,8 @@ import { useAuth } from '@/components/auth-provider';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SlopCard } from '@/components/slop-card';
-import type { User, Slop } from '@/types';
+import type { User, Slop, ReactionCount } from '@/types';
+import { REACTION_EMOJI } from '@/types';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -20,6 +21,14 @@ export function UserProfile({ user, slops }: Props) {
   const { user: currentUser } = useAuth();
   const isOwner = currentUser?.id === user.id;
   const [bookmarkedSlops, setBookmarkedSlops] = useState<Slop[]>([]);
+  const [reactionStats, setReactionStats] = useState<ReactionCount | null>(null);
+
+  useEffect(() => {
+    fetch(`/api/users/${user.id}/reaction-stats`)
+      .then((res) => res.json())
+      .then((data) => setReactionStats(data.stats))
+      .catch(console.error);
+  }, [user.id]);
 
   useEffect(() => {
     if (isOwner) {
@@ -56,6 +65,17 @@ export function UserProfile({ user, slops }: Props) {
           <p className="text-muted-foreground text-sm">
             {t('workCount', { count: slops.length })}
           </p>
+          {reactionStats && (
+            <div className="flex flex-wrap gap-2 mt-1">
+              {(Object.entries(reactionStats) as [string, number][])
+                .filter(([, count]) => count > 0)
+                .map(([type, count]) => (
+                  <span key={type} className="text-sm text-muted-foreground">
+                    {REACTION_EMOJI[type as keyof typeof REACTION_EMOJI]} {count}
+                  </span>
+                ))}
+            </div>
+          )}
         </div>
       </div>
 

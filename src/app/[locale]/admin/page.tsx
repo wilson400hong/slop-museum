@@ -30,7 +30,7 @@ export default async function AdminPage() {
     .from('reports')
     .select(`
       *,
-      slop:slops(id, title, preview_image_url, is_hidden),
+      slop:slops(id, title, preview_image_url, is_hidden, user_id),
       reporter:users!reports_reporter_id_fkey(display_name)
     `)
     .eq('status', 'pending')

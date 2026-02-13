@@ -40,6 +40,7 @@ export default function SubmitPage() {
   const [codeHtml, setCodeHtml] = useState('');
   const [codeCss, setCodeCss] = useState('');
   const [codeJs, setCodeJs] = useState('');
+  const [detecting, setDetecting] = useState(false);
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) => {
@@ -178,13 +179,41 @@ export default function SubmitPage() {
           <TabsContent value="url" className="space-y-4">
             <div>
               <Label htmlFor="url">{t('urlLabel')}</Label>
-              <Input
-                id="url"
-                type="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://..."
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="url"
+                  type="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="https://..."
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={!url.trim() || detecting}
+                  onClick={async () => {
+                    setDetecting(true);
+                    try {
+                      const res = await fetch(`/api/og-image?url=${encodeURIComponent(url.trim())}`);
+                      const data = await res.json();
+                      if (data.imageUrl) {
+                        setPreviewImageUrl(data.imageUrl);
+                        toast({ title: t('submitSuccess').replace('!', '') });
+                      } else {
+                        toast({ title: t('noOgImage'), variant: 'destructive' });
+                      }
+                    } catch {
+                      toast({ title: t('noOgImage'), variant: 'destructive' });
+                    } finally {
+                      setDetecting(false);
+                    }
+                  }}
+                  className="whitespace-nowrap"
+                >
+                  {detecting ? t('detecting') : t('autoDetect')}
+                </Button>
+              </div>
             </div>
           </TabsContent>
 

@@ -60,7 +60,10 @@
     "tagRequired": "請至少選擇 1 個標籤",
     "urlRequired": "請輸入作品 URL",
     "submitSuccess": "作品提交成功！",
-    "submitFailed": "提交失敗"
+    "submitFailed": "提交失敗",
+    "autoDetect": "自動偵測",
+    "detecting": "偵測中...",
+    "noOgImage": "未找到預覽圖"
   },
   "Reactions": {
     "loginRequired": "請先登入",
@@ -69,7 +72,8 @@
     "mind_blown": "腦洞大開",
     "cool": "很酷",
     "wtf": "這啥？",
-    "promising": "有潛力"
+    "promising": "有潛力",
+    "anonymousReaction": "匿名反應"
   },
   "Bookmark": {
     "loginRequired": "請先登入",
@@ -106,7 +110,9 @@
     "workHidden": "作品已下架",
     "workDeleted": "作品已刪除",
     "reportDismissed": "檢舉已駁回",
-    "actionFailed": "操作失敗"
+    "actionFailed": "操作失敗",
+    "banUser": "封禁用戶",
+    "userBanned": "用戶已被封禁"
   },
   "CodeEditor": {
     "livePreview": "即時預覽"
@@ -129,6 +135,11 @@
     "music": "音樂",
     "useless": "沒用",
     "funny": "搞笑"
+  },
+  "Theme": {
+    "light": "淺色",
+    "dark": "深色",
+    "system": "系統"
   },
   "NotFound": {
     "title": "頁面不存在",

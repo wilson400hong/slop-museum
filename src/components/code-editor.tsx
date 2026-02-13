@@ -1,8 +1,14 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { useTheme } from 'next-themes';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
+import dynamic from 'next/dynamic';
+import { html as htmlLang } from '@codemirror/lang-html';
+import { css as cssLang } from '@codemirror/lang-css';
+import { javascript } from '@codemirror/lang-javascript';
+
+const CodeMirror = dynamic(() => import('@uiw/react-codemirror'), { ssr: false });
 
 interface Props {
   html: string;
@@ -15,6 +21,8 @@ interface Props {
 
 export function CodeEditor({ html, css, js, onHtmlChange, onCssChange, onJsChange }: Props) {
   const t = useTranslations('CodeEditor');
+  const { resolvedTheme } = useTheme();
+  const cmTheme = resolvedTheme === 'dark' ? 'dark' : 'light';
 
   const previewSrc = `<!DOCTYPE html>
 <html>
@@ -31,27 +39,36 @@ export function CodeEditor({ html, css, js, onHtmlChange, onCssChange, onJsChang
           <TabsTrigger value="js">JavaScript</TabsTrigger>
         </TabsList>
         <TabsContent value="html">
-          <Textarea
+          <CodeMirror
             value={html}
-            onChange={(e) => onHtmlChange(e.target.value)}
+            height="200px"
+            extensions={[htmlLang()]}
+            onChange={onHtmlChange}
+            theme={cmTheme}
             placeholder="<div>Hello World</div>"
-            className="font-mono text-sm min-h-[200px]"
+            className="border rounded-md overflow-hidden"
           />
         </TabsContent>
         <TabsContent value="css">
-          <Textarea
+          <CodeMirror
             value={css}
-            onChange={(e) => onCssChange(e.target.value)}
+            height="200px"
+            extensions={[cssLang()]}
+            onChange={onCssChange}
+            theme={cmTheme}
             placeholder="body { background: #fff; }"
-            className="font-mono text-sm min-h-[200px]"
+            className="border rounded-md overflow-hidden"
           />
         </TabsContent>
         <TabsContent value="js">
-          <Textarea
+          <CodeMirror
             value={js}
-            onChange={(e) => onJsChange(e.target.value)}
+            height="200px"
+            extensions={[javascript()]}
+            onChange={onJsChange}
+            theme={cmTheme}
             placeholder="console.log('Hello World');"
-            className="font-mono text-sm min-h-[200px]"
+            className="border rounded-md overflow-hidden"
           />
         </TabsContent>
       </Tabs>

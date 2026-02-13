@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isMockMode, mockDb } from '@/lib/mock-db';
 
 export async function POST(request: NextRequest) {
-  const { reportId, action } = await request.json();
+  const { reportId, action, userId } = await request.json();
 
   if (!reportId || !action) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -31,6 +31,13 @@ export async function POST(request: NextRequest) {
         break;
       case 'dismiss':
         mockDb.updateReportStatus(reportId, 'dismissed');
+        break;
+      case 'ban':
+        if (!userId) {
+          return NextResponse.json({ error: 'userId required for ban' }, { status: 400 });
+        }
+        mockDb.banUser(userId);
+        mockDb.updateReportStatus(reportId, 'reviewed');
         break;
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
@@ -83,6 +90,14 @@ export async function POST(request: NextRequest) {
 
     case 'dismiss':
       await supabase.from('reports').update({ status: 'dismissed' }).eq('id', reportId);
+      break;
+
+    case 'ban':
+      if (!userId) {
+        return NextResponse.json({ error: 'userId required for ban' }, { status: 400 });
+      }
+      await supabase.from('users').update({ is_banned: true }).eq('id', userId);
+      await supabase.from('reports').update({ status: 'reviewed' }).eq('id', reportId);
       break;
 
     default:
