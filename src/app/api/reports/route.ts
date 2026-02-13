@@ -1,16 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { isMockMode, mockDb } from '@/lib/mock-db';
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   const { slop_id, reason } = await request.json();
 
   if (!slop_id || !reason) {
@@ -20,6 +12,24 @@ export async function POST(request: NextRequest) {
   const validReasons = ['malicious', 'spam', 'inappropriate'];
   if (!validReasons.includes(reason)) {
     return NextResponse.json({ error: 'Invalid report reason' }, { status: 400 });
+  }
+
+  if (isMockMode()) {
+    const user = mockDb.getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    mockDb.createReport(slop_id, user.id, reason);
+    return NextResponse.json({ success: true }, { status: 201 });
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const { error } = await supabase.from('reports').insert({

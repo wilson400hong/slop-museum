@@ -1,10 +1,19 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { isMockMode, mockDb } from '@/lib/mock-db';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  if (isMockMode()) {
+    const user = mockDb.getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ bookmarked: false });
+    }
+    return NextResponse.json({ bookmarked: mockDb.isBookmarked(user.id, params.id) });
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

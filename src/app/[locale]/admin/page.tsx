@@ -1,8 +1,16 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { AdminDashboard } from './admin-dashboard';
+import { isMockMode, mockDb } from '@/lib/mock-db';
 
 export default async function AdminPage() {
+  if (isMockMode()) {
+    const user = mockDb.getCurrentUser();
+    if (!user || user.role !== 'admin') redirect('/');
+    const reports = mockDb.getPendingReports();
+    return <AdminDashboard reports={reports || []} />;
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

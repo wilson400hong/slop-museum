@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
@@ -15,6 +16,7 @@ export function ImageUpload({ value, onChange }: Props) {
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const t = useTranslations('ImageUpload');
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -23,12 +25,12 @@ export function ImageUpload({ value, onChange }: Props) {
     // Validate
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      toast({ title: '不支援的檔案格式', description: '僅支援 JPEG、PNG、GIF、WebP', variant: 'destructive' });
+      toast({ title: t('unsupportedFormat'), description: t('supportedFormats'), variant: 'destructive' });
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      toast({ title: '檔案過大', description: '最大 5MB', variant: 'destructive' });
+      toast({ title: t('fileTooLarge'), description: t('maxSize'), variant: 'destructive' });
       return;
     }
 
@@ -50,10 +52,10 @@ export function ImageUpload({ value, onChange }: Props) {
       }
 
       onChange(data.url);
-      toast({ title: '圖片上傳成功' });
+      toast({ title: t('uploadSuccess') });
     } catch (error) {
       toast({
-        title: '上傳失敗',
+        title: t('uploadFailed'),
         description: error instanceof Error ? error.message : 'Unknown error',
         variant: 'destructive',
       });
@@ -97,10 +99,10 @@ export function ImageUpload({ value, onChange }: Props) {
             disabled={uploading}
           >
             <Upload className="mr-2 h-4 w-4" />
-            {uploading ? '上傳中...' : '上傳預覽圖'}
+            {uploading ? t('uploading') : t('uploadButton')}
           </Button>
           <p className="text-xs text-muted-foreground mt-1">
-            支援 JPEG、PNG、GIF、WebP，最大 5MB
+            {t('uploadHint')}
           </p>
         </div>
       )}

@@ -85,18 +85,4 @@ export const REACTION_EMOJI: Record<ReactionType, string> = {
   promising: '✨',
 };
 
-export const REACTION_LABELS: Record<ReactionType, string> = {
-  hilarious: '好笑',
-  mind_blown: '腦洞大開',
-  cool: '很酷',
-  wtf: '這啥？',
-  promising: '有潛力',
-};
-
-export const REPORT_REASONS: Record<ReportReason, string> = {
-  malicious: '惡意內容',
-  spam: '垃圾廣告',
-  inappropriate: '不當內容',
-};
-
 export const DEFAULT_TAGS = ['game', 'tool', 'art', 'music', 'useless', 'funny'] as const;

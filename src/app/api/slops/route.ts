@@ -1,18 +1,33 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { isMockMode, mockDb } from '@/lib/mock-db';
+import { writeFile, mkdir } from 'fs/promises';
+import path from 'path';
 
 export async function GET(request: NextRequest) {
-  const supabase = await createClient();
   const { searchParams } = new URL(request.url);
   const tag = searchParams.get('tag');
   const cursor = searchParams.get('cursor');
   const limit = parseInt(searchParams.get('limit') || '20');
 
+  if (isMockMode()) {
+    const result = mockDb.getSlops({ limit, cursor, tag });
+    return NextResponse.json({ slops: result.slops, nextCursor: result.nextCursor });
+  }
+
+  let supabase;
+  try {
+    supabase = await createClient();
+  } catch (err) {
+    console.error('Failed to create Supabase client:', err);
+    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+  }
+
   let query = supabase
     .from('slops')
     .select(`
       *,
-      user:users(id, display_name, avatar_url),
+      user:users!slops_user_id_fkey(id, display_name, avatar_url),
       slop_tags(tag_id, tags(*))
     `)
     .eq('is_hidden', false)
@@ -49,6 +64,7 @@ export async function GET(request: NextRequest) {
   const { data: slops, error } = await query;
 
   if (error) {
+    console.error('Supabase slops query error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
@@ -94,26 +110,6 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  // Check if user is banned
-  const { data: profile } = await supabase
-    .from('users')
-    .select('is_banned')
-    .eq('id', user.id)
-    .single();
-
-  if (profile?.is_banned) {
-    return NextResponse.json({ error: 'Your account has been banned' }, { status: 403 });
-  }
-
   const body = await request.json();
   const { title, description, type, url, code_html, code_css, code_js, preview_image_url, is_anonymous, tags } =
     body;
@@ -139,16 +135,76 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  if (isMockMode()) {
+    const user = mockDb.getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Generate sandbox file for code type
+    let sandbox_url = null;
+    if (type === 'code') {
+      const htmlContent = generateSandboxHtml(code_html || '', code_css || '', code_js || '');
+      const buffer = Buffer.from(htmlContent, 'utf-8');
+      const fileName = `${Date.now()}.html`;
+      const sandboxDir = path.join(process.cwd(), 'public', 'uploads', 'sandboxes');
+      await mkdir(sandboxDir, { recursive: true });
+      const filePath = path.join(sandboxDir, fileName);
+      await writeFile(filePath, buffer);
+      sandbox_url = `/uploads/sandboxes/${fileName}`;
+    }
+
+    const slop = mockDb.createSlop({
+      title,
+      description: description || '',
+      type,
+      url: type === 'url' ? url : undefined,
+      code_html: type === 'code' ? code_html : undefined,
+      code_css: type === 'code' ? code_css : undefined,
+      code_js: type === 'code' ? code_js : undefined,
+      sandbox_url: sandbox_url || undefined,
+      preview_image_url: preview_image_url || undefined,
+      is_anonymous: is_anonymous || false,
+      tags,
+    });
+
+    return NextResponse.json({ slop }, { status: 201 });
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  // Check if user is banned
+  const { data: profile } = await supabase
+    .from('users')
+    .select('is_banned')
+    .eq('id', user.id)
+    .single();
+
+  if (profile?.is_banned) {
+    return NextResponse.json({ error: 'Your account has been banned' }, { status: 403 });
+  }
+
   // Generate sandbox URL for code type
   let sandbox_url = null;
   if (type === 'code') {
     const htmlContent = generateSandboxHtml(code_html || '', code_css || '', code_js || '');
-    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const buffer = Buffer.from(htmlContent, 'utf-8');
     const fileName = `${user.id}/${Date.now()}.html`;
 
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('slop-sandboxes')
-      .upload(fileName, blob, { contentType: 'text/html' });
+      .upload(fileName, buffer, { contentType: 'text/html', upsert: false });
+
+    if (uploadError) {
+      console.error('Sandbox upload error:', uploadError);
+    }
 
     if (!uploadError && uploadData) {
       const { data: publicUrl } = supabase.storage

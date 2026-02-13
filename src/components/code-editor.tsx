@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -13,6 +14,8 @@ interface Props {
 }
 
 export function CodeEditor({ html, css, js, onHtmlChange, onCssChange, onJsChange }: Props) {
+  const t = useTranslations('CodeEditor');
+
   const previewSrc = `<!DOCTYPE html>
 <html>
 <head><style>${css}</style></head>
@@ -54,7 +57,7 @@ export function CodeEditor({ html, css, js, onHtmlChange, onCssChange, onJsChang
       </Tabs>
 
       <div>
-        <p className="text-sm text-muted-foreground mb-2">即時預覽</p>
+        <p className="text-sm text-muted-foreground mb-2">{t('livePreview')}</p>
         <div className="border rounded-lg overflow-hidden bg-white">
           <iframe
             srcDoc={previewSrc}

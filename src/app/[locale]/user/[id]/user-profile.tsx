@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/components/auth-provider';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,6 +15,8 @@ interface Props {
 }
 
 export function UserProfile({ user, slops }: Props) {
+  const t = useTranslations('UserProfile');
+  const locale = useLocale();
   const { user: currentUser } = useAuth();
   const isOwner = currentUser?.id === user.id;
   const [bookmarkedSlops, setBookmarkedSlops] = useState<Slop[]>([]);
@@ -48,23 +51,23 @@ export function UserProfile({ user, slops }: Props) {
         <div>
           <h1 className="text-2xl font-bold">{user.display_name}</h1>
           <p className="text-muted-foreground text-sm">
-            加入時間：{new Date(user.created_at).toLocaleDateString('zh-TW')}
+            {t('joinDate', { date: new Date(user.created_at).toLocaleDateString(locale) })}
           </p>
           <p className="text-muted-foreground text-sm">
-            {slops.length} 個作品
+            {t('workCount', { count: slops.length })}
           </p>
         </div>
       </div>
 
       <Tabs defaultValue="works">
         <TabsList>
-          <TabsTrigger value="works">我的作品</TabsTrigger>
-          {isOwner && <TabsTrigger value="bookmarks">收藏</TabsTrigger>}
+          <TabsTrigger value="works">{t('myWorks')}</TabsTrigger>
+          {isOwner && <TabsTrigger value="bookmarks">{t('bookmarks')}</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="works" className="mt-6">
           {slops.length === 0 ? (
-            <p className="text-muted-foreground text-center py-12">還沒有作品</p>
+            <p className="text-muted-foreground text-center py-12">{t('noWorks')}</p>
           ) : (
             <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
               {slops.map((slop) => (
@@ -77,7 +80,7 @@ export function UserProfile({ user, slops }: Props) {
         {isOwner && (
           <TabsContent value="bookmarks" className="mt-6">
             {bookmarkedSlops.length === 0 ? (
-              <p className="text-muted-foreground text-center py-12">還沒有收藏</p>
+              <p className="text-muted-foreground text-center py-12">{t('noBookmarks')}</p>
             ) : (
               <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
                 {bookmarkedSlops.map((slop) => (

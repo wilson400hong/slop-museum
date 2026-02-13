@@ -2,12 +2,20 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import { UserProfile } from './user-profile';
 import type { Metadata } from 'next';
+import { isMockMode, mockDb } from '@/lib/mock-db';
 
 interface Props {
-  params: { id: string };
+  params: { id: string; locale: string };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  if (isMockMode()) {
+    const user = mockDb.getUser(params.id);
+    return {
+      title: user ? `${user.display_name} - Slop Museum` : 'User - Slop Museum',
+    };
+  }
+
   const supabase = await createClient();
   const { data: user } = await supabase
     .from('users')
@@ -21,6 +29,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function UserPage({ params }: Props) {
+  if (isMockMode()) {
+    const user = mockDb.getUser(params.id);
+    if (!user) {
+      notFound();
+    }
+    const slops = mockDb.getUserSlops(params.id);
+    return <UserProfile user={user} slops={slops || []} />;
+  }
+
   const supabase = await createClient();
 
   const { data: user } = await supabase

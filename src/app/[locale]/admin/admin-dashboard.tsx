@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { REPORT_REASONS } from '@/types';
 import type { ReportReason } from '@/types';
 
 interface Report {
@@ -31,6 +31,9 @@ interface Props {
 export function AdminDashboard({ reports: initialReports }: Props) {
   const [reports, setReports] = useState(initialReports);
   const { toast } = useToast();
+  const t = useTranslations('Admin');
+  const tReport = useTranslations('Report');
+  const locale = useLocale();
 
   const handleAction = async (
     reportId: string,
@@ -49,26 +52,26 @@ export function AdminDashboard({ reports: initialReports }: Props) {
       toast({
         title:
           action === 'hide'
-            ? '作品已下架'
+            ? t('workHidden')
             : action === 'delete'
-              ? '作品已刪除'
-              : '檢舉已駁回',
+              ? t('workDeleted')
+              : t('reportDismissed'),
       });
     } catch {
-      toast({ title: '操作失敗', variant: 'destructive' });
+      toast({ title: t('actionFailed'), variant: 'destructive' });
     }
   };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6">管理後台</h1>
+      <h1 className="text-3xl font-bold mb-6">{t('title')}</h1>
 
       <div className="mb-4">
-        <h2 className="text-xl font-semibold">待處理檢舉 ({reports.length})</h2>
+        <h2 className="text-xl font-semibold">{t('pendingReports', { count: reports.length })}</h2>
       </div>
 
       {reports.length === 0 ? (
-        <p className="text-muted-foreground text-center py-12">沒有待處理的檢舉</p>
+        <p className="text-muted-foreground text-center py-12">{t('noReports')}</p>
       ) : (
         <div className="space-y-4">
           {reports.map((report) => (
@@ -77,14 +80,14 @@ export function AdminDashboard({ reports: initialReports }: Props) {
                 <CardTitle className="text-lg flex items-center gap-2">
                   {report.slop.title}
                   <Badge variant="destructive">
-                    {REPORT_REASONS[report.reason]}
+                    {tReport(report.reason)}
                   </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-3">
-                  檢舉者：{report.reporter.display_name} |{' '}
-                  {new Date(report.created_at).toLocaleDateString('zh-TW')}
+                  {t('reporter', { name: report.reporter.display_name })} |{' '}
+                  {new Date(report.created_at).toLocaleDateString(locale)}
                 </p>
                 <div className="flex gap-2">
                   <Button
@@ -92,21 +95,21 @@ export function AdminDashboard({ reports: initialReports }: Props) {
                     size="sm"
                     onClick={() => handleAction(report.id, 'hide')}
                   >
-                    下架作品
+                    {t('hideWork')}
                   </Button>
                   <Button
                     variant="destructive"
                     size="sm"
                     onClick={() => handleAction(report.id, 'delete')}
                   >
-                    刪除作品
+                    {t('deleteWork')}
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => handleAction(report.id, 'dismiss')}
                   >
-                    駁回檢舉
+                    {t('dismissReport')}
                   </Button>
                 </div>
               </CardContent>

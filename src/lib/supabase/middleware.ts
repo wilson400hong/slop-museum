@@ -51,12 +51,7 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  // Protect submit route
-  if (request.nextUrl.pathname.startsWith('/submit') && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/';
-    return NextResponse.redirect(url);
-  }
+  // Allow submit route for everyone (page handles auth check with UI prompt)
 
   return supabaseResponse;
 }

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/routing';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,10 +14,15 @@ import { useToast } from '@/hooks/use-toast';
 import { DEFAULT_TAGS } from '@/types';
 import { CodeEditor } from '@/components/code-editor';
 import { ImageUpload } from '@/components/image-upload';
+import { useAuth } from '@/components/auth-provider';
+import { LoginButton } from '@/components/login-button';
 
 export default function SubmitPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const t = useTranslations('Submit');
+  const tTags = useTranslations('Tags');
+  const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<'url' | 'code'>('url');
 
@@ -41,7 +47,7 @@ export default function SubmitPage() {
         return prev.filter((t) => t !== tag);
       }
       if (prev.length >= 3) {
-        toast({ title: '最多選擇 3 個標籤', variant: 'destructive' });
+        toast({ title: t('maxTags'), variant: 'destructive' });
         return prev;
       }
       return [...prev, tag];
@@ -50,15 +56,15 @@ export default function SubmitPage() {
 
   const handleSubmit = async () => {
     if (!title.trim()) {
-      toast({ title: '請輸入作品標題', variant: 'destructive' });
+      toast({ title: t('titleRequired'), variant: 'destructive' });
       return;
     }
     if (selectedTags.length === 0) {
-      toast({ title: '請至少選擇 1 個標籤', variant: 'destructive' });
+      toast({ title: t('tagRequired'), variant: 'destructive' });
       return;
     }
     if (mode === 'url' && !url.trim()) {
-      toast({ title: '請輸入作品 URL', variant: 'destructive' });
+      toast({ title: t('urlRequired'), variant: 'destructive' });
       return;
     }
 
@@ -90,11 +96,11 @@ export default function SubmitPage() {
         throw new Error(data.error || 'Failed to submit');
       }
 
-      toast({ title: '作品提交成功！' });
+      toast({ title: t('submitSuccess') });
       router.push(`/slop/${data.slop.id}`);
     } catch (error) {
       toast({
-        title: '提交失敗',
+        title: t('submitFailed'),
         description: error instanceof Error ? error.message : 'Unknown error',
         variant: 'destructive',
       });
@@ -103,38 +109,51 @@ export default function SubmitPage() {
     }
   };
 
+  // Show login prompt if not authenticated
+  if (!authLoading && !user) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-3xl">
+        <div className="flex flex-col items-center justify-center min-h-[40vh] gap-4">
+          <h1 className="text-3xl font-bold">{t('pageTitle')}</h1>
+          <p className="text-muted-foreground">{t('loginPrompt')}</p>
+          <LoginButton />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
-      <h1 className="text-3xl font-bold mb-6">提交作品</h1>
+      <h1 className="text-3xl font-bold mb-6">{t('pageTitle')}</h1>
 
       <div className="space-y-6">
         {/* Title */}
         <div>
-          <Label htmlFor="title">作品標題 *</Label>
+          <Label htmlFor="title">{t('titleLabel')}</Label>
           <Input
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="給你的作品取個名字"
+            placeholder={t('titlePlaceholder')}
             maxLength={100}
           />
         </div>
 
         {/* Description */}
         <div>
-          <Label htmlFor="description">作品簡介</Label>
+          <Label htmlFor="description">{t('descriptionLabel')}</Label>
           <Textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="簡單介紹一下你的作品..."
+            placeholder={t('descriptionPlaceholder')}
             rows={3}
           />
         </div>
 
         {/* Tags */}
         <div>
-          <Label>標籤 * (選擇 1-3 個)</Label>
+          <Label>{t('tagsLabel')}</Label>
           <div className="flex flex-wrap gap-2 mt-2">
             {DEFAULT_TAGS.map((tag) => (
               <Badge
@@ -143,7 +162,7 @@ export default function SubmitPage() {
                 className="cursor-pointer text-sm px-3 py-1"
                 onClick={() => toggleTag(tag)}
               >
-                {tag}
+                {tTags.has(tag) ? tTags(tag) : tag}
               </Badge>
             ))}
           </div>
@@ -152,13 +171,13 @@ export default function SubmitPage() {
         {/* Mode Tabs */}
         <Tabs value={mode} onValueChange={(v) => setMode(v as 'url' | 'code')}>
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="url">URL 提交</TabsTrigger>
-            <TabsTrigger value="code">Code Snippet 提交</TabsTrigger>
+            <TabsTrigger value="url">{t('urlTab')}</TabsTrigger>
+            <TabsTrigger value="code">{t('codeTab')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="url" className="space-y-4">
             <div>
-              <Label htmlFor="url">作品連結 *</Label>
+              <Label htmlFor="url">{t('urlLabel')}</Label>
               <Input
                 id="url"
                 type="url"
@@ -183,7 +202,7 @@ export default function SubmitPage() {
 
         {/* Preview Image Upload */}
         <div>
-          <Label>預覽圖</Label>
+          <Label>{t('previewImage')}</Label>
           <ImageUpload value={previewImageUrl} onChange={setPreviewImageUrl} />
         </div>
 
@@ -195,13 +214,13 @@ export default function SubmitPage() {
             onCheckedChange={(checked) => setIsAnonymous(!!checked)}
           />
           <Label htmlFor="anonymous" className="cursor-pointer">
-            匿名發布
+            {t('anonymous')}
           </Label>
         </div>
 
         {/* Submit */}
         <Button onClick={handleSubmit} disabled={loading} className="w-full" size="lg">
-          {loading ? '提交中...' : '提交作品'}
+          {loading ? t('submitting') : t('submitButton')}
         </Button>
       </div>
     </div>

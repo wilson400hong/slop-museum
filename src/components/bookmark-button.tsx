@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
@@ -13,6 +14,7 @@ interface Props {
 export function BookmarkButton({ slopId }: Props) {
   const { user } = useAuth();
   const { toast } = useToast();
+  const t = useTranslations('Bookmark');
   const [bookmarked, setBookmarked] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -27,7 +29,7 @@ export function BookmarkButton({ slopId }: Props) {
 
   const toggle = async () => {
     if (!user) {
-      toast({ title: '請先登入', variant: 'destructive' });
+      toast({ title: t('loginRequired'), variant: 'destructive' });
       return;
     }
 
@@ -45,10 +47,10 @@ export function BookmarkButton({ slopId }: Props) {
       if (!res.ok) throw new Error('Failed');
 
       const data = await res.json();
-      toast({ title: data.action === 'added' ? '已收藏' : '已取消收藏' });
+      toast({ title: data.action === 'added' ? t('added') : t('removed') });
     } catch {
       setBookmarked(prev);
-      toast({ title: '操作失敗', variant: 'destructive' });
+      toast({ title: t('actionFailed'), variant: 'destructive' });
     } finally {
       setLoading(false);
     }

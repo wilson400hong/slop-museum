@@ -1,10 +1,18 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { isMockMode, mockDb } from '@/lib/mock-db';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  if (isMockMode()) {
+    const user = mockDb.getCurrentUser();
+    const counts = mockDb.getReactionCounts(params.id);
+    const userReactions = user ? mockDb.getUserReactions(params.id, user.id) : [];
+    return NextResponse.json({ counts, userReactions });
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

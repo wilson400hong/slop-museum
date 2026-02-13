@@ -1,0 +1,138 @@
+{
+  "Metadata": {
+    "title": "雜燴博物館 - 頌揚不完美的創造",
+    "description": "一個專門收藏和展示 AI/Vibe Coding 時代「半成品」的數位博物館。分享你充滿創意但可能不夠完美的作品。",
+    "ogTitle": "雜燴博物館",
+    "ogDescription": "頌揚不完美的創造"
+  },
+  "HomePage": {
+    "title": "雜燴博物館",
+    "subtitle": "頌揚不完美的創造",
+    "allTags": "全部",
+    "emptyState": "還沒有任何作品，成為第一個提交者吧！"
+  },
+  "Navbar": {
+    "brandName": "雜燴博物館",
+    "submit": "提交作品"
+  },
+  "Login": {
+    "signIn": "登入",
+    "dialogTitle": "登入雜燴博物館",
+    "dialogDescription": "選擇一種方式登入，開始分享你的創作",
+    "google": "使用 Google 登入",
+    "github": "使用 GitHub 登入",
+    "signingIn": "登入中...",
+    "mockLogin": "Mock 登入",
+    "devMockLogin": "Dev Mock 登入 (開發模式)"
+  },
+  "UserMenu": {
+    "myPage": "我的頁面",
+    "submitWork": "提交作品",
+    "signOut": "登出"
+  },
+  "SlopCard": {
+    "anonymous": "匿名"
+  },
+  "SlopDetail": {
+    "anonymous": "匿名",
+    "openWork": "打開作品",
+    "workPreview": "作品預覽",
+    "fullscreen": "全螢幕",
+    "loadError": "載入超時或發生錯誤"
+  },
+  "Submit": {
+    "pageTitle": "提交作品",
+    "loginPrompt": "請先登入才能提交作品",
+    "titleLabel": "作品標題 *",
+    "titlePlaceholder": "給你的作品取個名字",
+    "descriptionLabel": "作品簡介",
+    "descriptionPlaceholder": "簡單介紹一下你的作品...",
+    "tagsLabel": "標籤 * (選擇 1-3 個)",
+    "urlTab": "URL 提交",
+    "codeTab": "Code Snippet 提交",
+    "urlLabel": "作品連結 *",
+    "previewImage": "預覽圖",
+    "anonymous": "匿名發布",
+    "submitting": "提交中...",
+    "submitButton": "提交作品",
+    "maxTags": "最多選擇 3 個標籤",
+    "titleRequired": "請輸入作品標題",
+    "tagRequired": "請至少選擇 1 個標籤",
+    "urlRequired": "請輸入作品 URL",
+    "submitSuccess": "作品提交成功！",
+    "submitFailed": "提交失敗"
+  },
+  "Reactions": {
+    "loginRequired": "請先登入",
+    "actionFailed": "操作失敗",
+    "hilarious": "好笑",
+    "mind_blown": "腦洞大開",
+    "cool": "很酷",
+    "wtf": "這啥？",
+    "promising": "有潛力"
+  },
+  "Bookmark": {
+    "loginRequired": "請先登入",
+    "added": "已收藏",
+    "removed": "已取消收藏",
+    "actionFailed": "操作失敗"
+  },
+  "Report": {
+    "loginRequired": "請先登入",
+    "title": "檢舉作品",
+    "description": "請選擇檢舉原因",
+    "submitted": "檢舉已送出",
+    "failed": "檢舉失敗",
+    "malicious": "惡意內容",
+    "spam": "垃圾廣告",
+    "inappropriate": "不當內容"
+  },
+  "UserProfile": {
+    "joinDate": "加入時間：{date}",
+    "workCount": "{count} 個作品",
+    "myWorks": "我的作品",
+    "bookmarks": "收藏",
+    "noWorks": "還沒有作品",
+    "noBookmarks": "還沒有收藏"
+  },
+  "Admin": {
+    "title": "管理後台",
+    "pendingReports": "待處理檢舉 ({count})",
+    "noReports": "沒有待處理的檢舉",
+    "reporter": "檢舉者：{name}",
+    "hideWork": "下架作品",
+    "deleteWork": "刪除作品",
+    "dismissReport": "駁回檢舉",
+    "workHidden": "作品已下架",
+    "workDeleted": "作品已刪除",
+    "reportDismissed": "檢舉已駁回",
+    "actionFailed": "操作失敗"
+  },
+  "CodeEditor": {
+    "livePreview": "即時預覽"
+  },
+  "ImageUpload": {
+    "unsupportedFormat": "不支援的檔案格式",
+    "supportedFormats": "僅支援 JPEG、PNG、GIF、WebP",
+    "fileTooLarge": "檔案過大",
+    "maxSize": "最大 5MB",
+    "uploading": "上傳中...",
+    "uploadButton": "上傳預覽圖",
+    "uploadHint": "支援 JPEG、PNG、GIF、WebP，最大 5MB",
+    "uploadSuccess": "圖片上傳成功",
+    "uploadFailed": "上傳失敗"
+  },
+  "Tags": {
+    "game": "遊戲",
+    "tool": "工具",
+    "art": "藝術",
+    "music": "音樂",
+    "useless": "沒用",
+    "funny": "搞笑"
+  },
+  "NotFound": {
+    "title": "頁面不存在",
+    "description": "找不到您要的頁面。",
+    "backHome": "回首頁"
+  }
+}

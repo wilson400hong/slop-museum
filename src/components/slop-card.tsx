@@ -1,6 +1,7 @@
 'use client';
 
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,6 +14,8 @@ interface Props {
 }
 
 export function SlopCard({ slop }: Props) {
+  const t = useTranslations('SlopCard');
+  const tTags = useTranslations('Tags');
   const tags = slop.tags || extractTags(slop);
   const reactions = slop.reactions_count;
 
@@ -33,14 +36,14 @@ export function SlopCard({ slop }: Props) {
         <CardContent className="p-4">
           <h3 className="font-semibold text-lg line-clamp-2 mb-1">{slop.title}</h3>
           <p className="text-sm text-muted-foreground mb-2">
-            {slop.is_anonymous ? 'Anonymous' : slop.user?.display_name || 'Unknown'}
+            {slop.is_anonymous ? t('anonymous') : slop.user?.display_name || 'Unknown'}
           </p>
 
           {tags.length > 0 && (
             <div className="flex flex-wrap gap-1 mb-2">
               {tags.map((tag) => (
                 <Badge key={typeof tag === 'string' ? tag : tag.name} variant="secondary" className="text-xs">
-                  {typeof tag === 'string' ? tag : tag.name}
+                  {(() => { const name = typeof tag === 'string' ? tag : tag.name; return tTags.has(name) ? tTags(name) : name; })()}
                 </Badge>
               ))}
             </div>

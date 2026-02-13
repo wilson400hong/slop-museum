@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import { useAuth } from '@/components/auth-provider';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -9,11 +11,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import Link from 'next/link';
 import { LogOut, User, PlusCircle } from 'lucide-react';
 
 export function UserMenu() {
   const { profile, signOut } = useAuth();
+  const t = useTranslations('UserMenu');
 
   if (!profile) return null;
 
@@ -29,19 +31,19 @@ export function UserMenu() {
         <DropdownMenuItem asChild>
           <Link href={`/user/${profile.id}`} className="flex items-center">
             <User className="mr-2 h-4 w-4" />
-            我的頁面
+            {t('myPage')}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/submit" className="flex items-center">
             <PlusCircle className="mr-2 h-4 w-4" />
-            提交作品
+            {t('submitWork')}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={signOut} className="flex items-center text-red-600">
           <LogOut className="mr-2 h-4 w-4" />
-          登出
+          {t('signOut')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

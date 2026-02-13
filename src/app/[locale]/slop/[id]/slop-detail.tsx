@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,9 @@ interface Props {
 }
 
 export function SlopDetail({ slop }: Props) {
+  const t = useTranslations('SlopDetail');
+  const tTags = useTranslations('Tags');
+  const locale = useLocale();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [iframeError, setIframeError] = useState(false);
@@ -62,7 +66,7 @@ export function SlopDetail({ slop }: Props) {
         <h1 className="text-3xl font-bold mb-3">{slop.title}</h1>
         <div className="flex items-center gap-3 mb-3">
           {slop.is_anonymous ? (
-            <span className="text-muted-foreground">Anonymous</span>
+            <span className="text-muted-foreground">{t('anonymous')}</span>
           ) : author ? (
             <Link href={`/user/${author.id}`} className="flex items-center gap-2 hover:underline">
               <Avatar className="h-6 w-6">
@@ -73,7 +77,7 @@ export function SlopDetail({ slop }: Props) {
             </Link>
           ) : null}
           <span className="text-muted-foreground text-sm">
-            {new Date(slop.created_at).toLocaleDateString('zh-TW')}
+            {new Date(slop.created_at).toLocaleDateString(locale)}
           </span>
         </div>
 
@@ -81,7 +85,7 @@ export function SlopDetail({ slop }: Props) {
           <div className="flex flex-wrap gap-1 mb-4">
             {tags.map((tag) => (
               <Badge key={tag.name} variant="secondary">
-                {tag.name}
+                {tTags.has(tag.name) ? tTags(tag.name) : tag.name}
               </Badge>
             ))}
           </div>
@@ -110,7 +114,7 @@ export function SlopDetail({ slop }: Props) {
           <Button asChild size="lg">
             <a href={slop.url} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="mr-2 h-4 w-4" />
-              打開作品
+              {t('openWork')}
             </a>
           </Button>
         </div>
@@ -120,16 +124,16 @@ export function SlopDetail({ slop }: Props) {
       {slop.type === 'code' && (
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm text-muted-foreground">作品預覽</p>
+            <p className="text-sm text-muted-foreground">{t('workPreview')}</p>
             <Button variant="ghost" size="sm" onClick={handleFullscreen}>
               <Maximize2 className="h-4 w-4 mr-1" />
-              全螢幕
+              {t('fullscreen')}
             </Button>
           </div>
           <div className="border rounded-lg overflow-hidden bg-white relative">
             {iframeError ? (
               <div className="flex items-center justify-center h-[500px] text-muted-foreground">
-                載入超時或發生錯誤
+                {t('loadError')}
               </div>
             ) : (
               <iframe

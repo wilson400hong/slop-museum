@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
-import { REACTION_EMOJI, REACTION_LABELS } from '@/types';
+import { REACTION_EMOJI } from '@/types';
 import type { ReactionType, ReactionCount } from '@/types';
 
 interface Props {
@@ -16,6 +17,7 @@ const REACTION_TYPES: ReactionType[] = ['hilarious', 'mind_blown', 'cool', 'wtf'
 export function ReactionBar({ slopId }: Props) {
   const { user } = useAuth();
   const { toast } = useToast();
+  const t = useTranslations('Reactions');
   const [counts, setCounts] = useState<ReactionCount>({
     hilarious: 0,
     mind_blown: 0,
@@ -38,7 +40,7 @@ export function ReactionBar({ slopId }: Props) {
 
   const toggleReaction = async (type: ReactionType) => {
     if (!user) {
-      toast({ title: '請先登入', variant: 'destructive' });
+      toast({ title: t('loginRequired'), variant: 'destructive' });
       return;
     }
 
@@ -70,7 +72,7 @@ export function ReactionBar({ slopId }: Props) {
       // Rollback
       setUserReactions(wasActive ? [...userReactions] : userReactions.filter((r) => r !== type));
       setCounts(counts);
-      toast({ title: '操作失敗', variant: 'destructive' });
+      toast({ title: t('actionFailed'), variant: 'destructive' });
     } finally {
       setLoading(null);
     }
@@ -85,7 +87,7 @@ export function ReactionBar({ slopId }: Props) {
           size="sm"
           onClick={() => toggleReaction(type)}
           disabled={loading === type}
-          title={REACTION_LABELS[type]}
+          title={t(type)}
           className="gap-1"
         >
           <span>{REACTION_EMOJI[type]}</span>

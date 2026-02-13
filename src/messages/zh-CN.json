@@ -1,0 +1,138 @@
+{
+  "Metadata": {
+    "title": "杂烩博物馆 - 颂扬不完美的创造",
+    "description": "一个专门收藏和展示 AI/Vibe Coding 时代「半成品」的数字博物馆。分享你充满创意但可能不够完美的作品。",
+    "ogTitle": "杂烩博物馆",
+    "ogDescription": "颂扬不完美的创造"
+  },
+  "HomePage": {
+    "title": "杂烩博物馆",
+    "subtitle": "颂扬不完美的创造",
+    "allTags": "全部",
+    "emptyState": "还没有任何作品，成为第一个提交者吧！"
+  },
+  "Navbar": {
+    "brandName": "杂烩博物馆",
+    "submit": "提交作品"
+  },
+  "Login": {
+    "signIn": "登录",
+    "dialogTitle": "登录杂烩博物馆",
+    "dialogDescription": "选择一种方式登录，开始分享你的创作",
+    "google": "使用 Google 登录",
+    "github": "使用 GitHub 登录",
+    "signingIn": "登录中...",
+    "mockLogin": "Mock 登录",
+    "devMockLogin": "Dev Mock 登录（开发模式）"
+  },
+  "UserMenu": {
+    "myPage": "我的页面",
+    "submitWork": "提交作品",
+    "signOut": "退出"
+  },
+  "SlopCard": {
+    "anonymous": "匿名"
+  },
+  "SlopDetail": {
+    "anonymous": "匿名",
+    "openWork": "打开作品",
+    "workPreview": "作品预览",
+    "fullscreen": "全屏",
+    "loadError": "加载超时或发生错误"
+  },
+  "Submit": {
+    "pageTitle": "提交作品",
+    "loginPrompt": "请先登录才能提交作品",
+    "titleLabel": "作品标题 *",
+    "titlePlaceholder": "给你的作品取个名字",
+    "descriptionLabel": "作品简介",
+    "descriptionPlaceholder": "简单介绍一下你的作品...",
+    "tagsLabel": "标签 *（选择 1-3 个）",
+    "urlTab": "URL 提交",
+    "codeTab": "Code Snippet 提交",
+    "urlLabel": "作品链接 *",
+    "previewImage": "预览图",
+    "anonymous": "匿名发布",
+    "submitting": "提交中...",
+    "submitButton": "提交作品",
+    "maxTags": "最多选择 3 个标签",
+    "titleRequired": "请输入作品标题",
+    "tagRequired": "请至少选择 1 个标签",
+    "urlRequired": "请输入作品 URL",
+    "submitSuccess": "作品提交成功！",
+    "submitFailed": "提交失败"
+  },
+  "Reactions": {
+    "loginRequired": "请先登录",
+    "actionFailed": "操作失败",
+    "hilarious": "好笑",
+    "mind_blown": "脑洞大开",
+    "cool": "很酷",
+    "wtf": "这啥？",
+    "promising": "有潜力"
+  },
+  "Bookmark": {
+    "loginRequired": "请先登录",
+    "added": "已收藏",
+    "removed": "已取消收藏",
+    "actionFailed": "操作失败"
+  },
+  "Report": {
+    "loginRequired": "请先登录",
+    "title": "举报作品",
+    "description": "请选择举报原因",
+    "submitted": "举报已提交",
+    "failed": "举报失败",
+    "malicious": "恶意内容",
+    "spam": "垃圾广告",
+    "inappropriate": "不当内容"
+  },
+  "UserProfile": {
+    "joinDate": "加入时间：{date}",
+    "workCount": "{count} 个作品",
+    "myWorks": "我的作品",
+    "bookmarks": "收藏",
+    "noWorks": "还没有作品",
+    "noBookmarks": "还没有收藏"
+  },
+  "Admin": {
+    "title": "管理后台",
+    "pendingReports": "待处理举报（{count}）",
+    "noReports": "没有待处理的举报",
+    "reporter": "举报者：{name}",
+    "hideWork": "下架作品",
+    "deleteWork": "删除作品",
+    "dismissReport": "驳回举报",
+    "workHidden": "作品已下架",
+    "workDeleted": "作品已删除",
+    "reportDismissed": "举报已驳回",
+    "actionFailed": "操作失败"
+  },
+  "CodeEditor": {
+    "livePreview": "实时预览"
+  },
+  "ImageUpload": {
+    "unsupportedFormat": "不支持的文件格式",
+    "supportedFormats": "仅支持 JPEG、PNG、GIF、WebP",
+    "fileTooLarge": "文件过大",
+    "maxSize": "最大 5MB",
+    "uploading": "上传中...",
+    "uploadButton": "上传预览图",
+    "uploadHint": "支持 JPEG、PNG、GIF、WebP，最大 5MB",
+    "uploadSuccess": "图片上传成功",
+    "uploadFailed": "上传失败"
+  },
+  "Tags": {
+    "game": "游戏",
+    "tool": "工具",
+    "art": "艺术",
+    "music": "音乐",
+    "useless": "没用",
+    "funny": "搞笑"
+  },
+  "NotFound": {
+    "title": "页面不存在",
+    "description": "找不到您要的页面。",
+    "backHome": "回首页"
+  }
+}

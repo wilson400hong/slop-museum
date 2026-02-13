@@ -1,0 +1,138 @@
+{
+  "Metadata": {
+    "title": "Slop Museum - Celebrate the Imperfect",
+    "description": "A digital museum dedicated to collecting and showcasing 'half-finished' creations from the AI/Vibe Coding era. Share your creative but imperfect works.",
+    "ogTitle": "Slop Museum",
+    "ogDescription": "Celebrate the Imperfect"
+  },
+  "HomePage": {
+    "title": "Slop Museum",
+    "subtitle": "Celebrate the Imperfect",
+    "allTags": "All",
+    "emptyState": "No works yet. Be the first to submit!"
+  },
+  "Navbar": {
+    "brandName": "Slop Museum",
+    "submit": "Submit"
+  },
+  "Login": {
+    "signIn": "Sign In",
+    "dialogTitle": "Sign in to Slop Museum",
+    "dialogDescription": "Choose a method to sign in and start sharing your creations",
+    "google": "Sign in with Google",
+    "github": "Sign in with GitHub",
+    "signingIn": "Signing in...",
+    "mockLogin": "Mock Login",
+    "devMockLogin": "Dev Mock Login"
+  },
+  "UserMenu": {
+    "myPage": "My Page",
+    "submitWork": "Submit",
+    "signOut": "Sign Out"
+  },
+  "SlopCard": {
+    "anonymous": "Anonymous"
+  },
+  "SlopDetail": {
+    "anonymous": "Anonymous",
+    "openWork": "Open Work",
+    "workPreview": "Work Preview",
+    "fullscreen": "Fullscreen",
+    "loadError": "Loading timed out or an error occurred"
+  },
+  "Submit": {
+    "pageTitle": "Submit Work",
+    "loginPrompt": "Please sign in to submit a work",
+    "titleLabel": "Title *",
+    "titlePlaceholder": "Name your work",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Briefly describe your work...",
+    "tagsLabel": "Tags * (choose 1-3)",
+    "urlTab": "URL",
+    "codeTab": "Code Snippet",
+    "urlLabel": "URL *",
+    "previewImage": "Preview Image",
+    "anonymous": "Submit anonymously",
+    "submitting": "Submitting...",
+    "submitButton": "Submit",
+    "maxTags": "Maximum 3 tags",
+    "titleRequired": "Please enter a title",
+    "tagRequired": "Please select at least 1 tag",
+    "urlRequired": "Please enter a URL",
+    "submitSuccess": "Work submitted successfully!",
+    "submitFailed": "Submission failed"
+  },
+  "Reactions": {
+    "loginRequired": "Please sign in first",
+    "actionFailed": "Action failed",
+    "hilarious": "Hilarious",
+    "mind_blown": "Mind Blown",
+    "cool": "Cool",
+    "wtf": "WTF",
+    "promising": "Promising"
+  },
+  "Bookmark": {
+    "loginRequired": "Please sign in first",
+    "added": "Bookmarked",
+    "removed": "Bookmark removed",
+    "actionFailed": "Action failed"
+  },
+  "Report": {
+    "loginRequired": "Please sign in first",
+    "title": "Report Work",
+    "description": "Select a reason for the report",
+    "submitted": "Report submitted",
+    "failed": "Report failed",
+    "malicious": "Malicious content",
+    "spam": "Spam",
+    "inappropriate": "Inappropriate content"
+  },
+  "UserProfile": {
+    "joinDate": "Joined: {date}",
+    "workCount": "{count} works",
+    "myWorks": "My Works",
+    "bookmarks": "Bookmarks",
+    "noWorks": "No works yet",
+    "noBookmarks": "No bookmarks yet"
+  },
+  "Admin": {
+    "title": "Admin Dashboard",
+    "pendingReports": "Pending Reports ({count})",
+    "noReports": "No pending reports",
+    "reporter": "Reporter: {name}",
+    "hideWork": "Hide Work",
+    "deleteWork": "Delete Work",
+    "dismissReport": "Dismiss",
+    "workHidden": "Work hidden",
+    "workDeleted": "Work deleted",
+    "reportDismissed": "Report dismissed",
+    "actionFailed": "Action failed"
+  },
+  "CodeEditor": {
+    "livePreview": "Live Preview"
+  },
+  "ImageUpload": {
+    "unsupportedFormat": "Unsupported file format",
+    "supportedFormats": "Supported: JPEG, PNG, GIF, WebP",
+    "fileTooLarge": "File too large",
+    "maxSize": "Maximum 5MB",
+    "uploading": "Uploading...",
+    "uploadButton": "Upload Preview",
+    "uploadHint": "Supports JPEG, PNG, GIF, WebP, up to 5MB",
+    "uploadSuccess": "Image uploaded successfully",
+    "uploadFailed": "Upload failed"
+  },
+  "Tags": {
+    "game": "Game",
+    "tool": "Tool",
+    "art": "Art",
+    "music": "Music",
+    "useless": "Useless",
+    "funny": "Funny"
+  },
+  "NotFound": {
+    "title": "Page Not Found",
+    "description": "The page you're looking for doesn't exist.",
+    "backHome": "Back to Home"
+  }
+}

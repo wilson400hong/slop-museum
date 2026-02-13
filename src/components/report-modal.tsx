@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -13,22 +14,24 @@ import {
 import { useAuth } from '@/components/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { Flag } from 'lucide-react';
-import { REPORT_REASONS } from '@/types';
 import type { ReportReason } from '@/types';
 
 interface Props {
   slopId: string;
 }
 
+const REPORT_REASON_KEYS: ReportReason[] = ['malicious', 'spam', 'inappropriate'];
+
 export function ReportModal({ slopId }: Props) {
   const { user } = useAuth();
   const { toast } = useToast();
+  const t = useTranslations('Report');
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleReport = async (reason: ReportReason) => {
     if (!user) {
-      toast({ title: '請先登入', variant: 'destructive' });
+      toast({ title: t('loginRequired'), variant: 'destructive' });
       return;
     }
 
@@ -43,10 +46,10 @@ export function ReportModal({ slopId }: Props) {
 
       if (!res.ok) throw new Error('Failed');
 
-      toast({ title: '檢舉已送出' });
+      toast({ title: t('submitted') });
       setOpen(false);
     } catch {
-      toast({ title: '檢舉失敗', variant: 'destructive' });
+      toast({ title: t('failed'), variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -61,11 +64,11 @@ export function ReportModal({ slopId }: Props) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>檢舉作品</DialogTitle>
-          <DialogDescription>請選擇檢舉原因</DialogDescription>
+          <DialogTitle>{t('title')}</DialogTitle>
+          <DialogDescription>{t('description')}</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2 mt-4">
-          {(Object.entries(REPORT_REASONS) as [ReportReason, string][]).map(([reason, label]) => (
+          {REPORT_REASON_KEYS.map((reason) => (
             <Button
               key={reason}
               variant="outline"
@@ -73,7 +76,7 @@ export function ReportModal({ slopId }: Props) {
               disabled={loading}
               className="justify-start"
             >
-              {label}
+              {t(reason)}
             </Button>
           ))}
         </div>

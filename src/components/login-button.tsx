@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,19 +12,71 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { createClient } from '@/lib/supabase/client';
+import { Separator } from '@/components/ui/separator';
+
+const isDev = process.env.NODE_ENV === 'development';
+const isMockMode = process.env.NEXT_PUBLIC_USE_MOCK === 'true';
 
 export function LoginButton() {
   const { signInWithGoogle, signInWithGitHub } = useAuth();
+  const [devLoading, setDevLoading] = useState(false);
+  const t = useTranslations('Login');
+
+  const handleDevLogin = async () => {
+    setDevLoading(true);
+    try {
+      const res = await fetch('/api/dev-login', { method: 'POST' });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error);
+      }
+
+      if (isMockMode) {
+        // Mock mode: server already flipped the auth state, just reload
+        window.location.reload();
+        return;
+      }
+
+      // Non-mock dev mode: sign in with Supabase credentials
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      window.location.reload();
+    } catch (err) {
+      console.error('Dev login failed:', err);
+      alert('Dev login failed: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    } finally {
+      setDevLoading(false);
+    }
+  };
+
+  // In mock mode, only show the mock login button
+  if (isMockMode) {
+    return (
+      <Button variant="default" onClick={handleDevLogin} disabled={devLoading}>
+        {devLoading ? t('signingIn') : t('mockLogin')}
+      </Button>
+    );
+  }
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="default">登入</Button>
+        <Button variant="default">{t('signIn')}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>登入 Slop Museum</DialogTitle>
-          <DialogDescription>選擇一種方式登入，開始分享你的創作</DialogDescription>
+          <DialogTitle>{t('dialogTitle')}</DialogTitle>
+          <DialogDescription>{t('dialogDescription')}</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-3 mt-4">
           <Button variant="outline" className="w-full" onClick={signInWithGoogle}>
@@ -44,14 +98,28 @@ export function LoginButton() {
                 fill="#EA4335"
               />
             </svg>
-            使用 Google 登入
+            {t('google')}
           </Button>
           <Button variant="outline" className="w-full" onClick={signInWithGitHub}>
             <svg className="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
             </svg>
-            使用 GitHub 登入
+            {t('github')}
           </Button>
+
+          {isDev && (
+            <>
+              <Separator className="my-1" />
+              <Button
+                variant="secondary"
+                className="w-full"
+                onClick={handleDevLogin}
+                disabled={devLoading}
+              >
+                {devLoading ? t('signingIn') : t('devMockLogin')}
+              </Button>
+            </>
+          )}
         </div>
       </DialogContent>
     </Dialog>

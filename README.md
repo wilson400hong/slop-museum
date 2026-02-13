@@ -48,9 +48,25 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 ### 3. Set up the database
 
-Go to your Supabase project → **SQL Editor**, paste the contents of `supabase/migration.sql`, and run it. This creates all tables, indexes, RLS policies, triggers, seed data, and storage buckets.
+Go to your Supabase project → **SQL Editor**, paste the contents of `supabase/migration.sql`, and run it. This creates all tables, indexes, RLS policies, triggers, and seed data.
 
-### 4. Enable OAuth providers
+### 4. Initialize Storage buckets
+
+Start the dev server first (see step 6), then open the following URL in your browser:
+
+```
+http://localhost:3000/api/setup
+```
+
+This automatically creates the required Storage buckets (`slop-previews` and `slop-sandboxes`). You should see:
+
+```json
+{"message":"Storage setup complete","results":{"slop-previews":"created","slop-sandboxes":"created"}}
+```
+
+> **Note:** This step requires `SUPABASE_SERVICE_ROLE_KEY` to be set in `.env.local`.
+
+### 5. Enable OAuth providers
 
 In your Supabase dashboard → **Authentication** → **Providers**:
 
@@ -58,7 +74,7 @@ In your Supabase dashboard → **Authentication** → **Providers**:
 - Enable **GitHub** and add your GitHub OAuth App credentials
 - Under **URL Configuration**, add `http://localhost:3000/auth/callback` to Redirect URLs
 
-### 5. Run the dev server
+### 6. Run the dev server
 
 ```bash
 npm run dev

@@ -1,7 +1,44 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { isMockMode, mockDb } from '@/lib/mock-db';
 
 export async function POST(request: NextRequest) {
+  const { reportId, action } = await request.json();
+
+  if (!reportId || !action) {
+    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+  }
+
+  if (isMockMode()) {
+    const user = mockDb.getCurrentUser();
+    if (!user || user.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const report = mockDb.getReport(reportId);
+    if (!report) {
+      return NextResponse.json({ error: 'Report not found' }, { status: 404 });
+    }
+
+    switch (action) {
+      case 'hide':
+        mockDb.hideSlop(report.slop_id);
+        mockDb.updateReportStatus(reportId, 'reviewed');
+        break;
+      case 'delete':
+        mockDb.deleteSlop(report.slop_id);
+        mockDb.updateReportStatus(reportId, 'reviewed');
+        break;
+      case 'dismiss':
+        mockDb.updateReportStatus(reportId, 'dismissed');
+        break;
+      default:
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+    }
+
+    return NextResponse.json({ success: true });
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -20,12 +57,6 @@ export async function POST(request: NextRequest) {
 
   if (profile?.role !== 'admin') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-
-  const { reportId, action } = await request.json();
-
-  if (!reportId || !action) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
   // Get report
