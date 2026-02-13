@@ -168,21 +168,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log('Auth state change:', event);
       setUser(session?.user ?? null);
 
-      if (session?.user) {
-        const data = await getOrCreateProfile(supabase, session.user);
-        if (data?.is_banned) {
-          await supabase.auth.signOut();
-          setUser(null);
+      try {
+        if (session?.user) {
+          const data = await getOrCreateProfile(supabase, session.user);
+          if (data?.is_banned) {
+            await supabase.auth.signOut();
+            setUser(null);
+            setProfile(null);
+            return;
+          }
+          setProfile(data);
+        } else {
           setProfile(null);
-          setLoading(false);
-          return;
         }
-        setProfile(data);
-      } else {
+      } catch (err) {
+        console.error('Auth state change error:', err);
         setProfile(null);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
