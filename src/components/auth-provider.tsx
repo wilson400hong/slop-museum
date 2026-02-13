@@ -33,6 +33,71 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const supabaseRef = useRef<SupabaseClient | null>(null);
 
+  const getDisplayName = (supabaseUser: SupabaseUser) => {
+    const metadata = supabaseUser.user_metadata as Record<string, unknown> | null;
+    const fullName = metadata?.full_name;
+    const name = metadata?.name;
+    if (typeof fullName === 'string' && fullName.trim()) return fullName;
+    if (typeof name === 'string' && name.trim()) return name;
+    if (supabaseUser.email) return supabaseUser.email.split('@')[0];
+    return 'User';
+  };
+
+  const getOrCreateProfile = async (
+    supabase: SupabaseClient,
+    supabaseUser: SupabaseUser
+  ): Promise<User> => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', supabaseUser.id)
+        .single();
+
+      if (data) return data as User;
+      if (error && error.code !== 'PGRST116') {
+        console.error('Profile fetch error:', error);
+      }
+
+      // Try to create profile
+      const displayName = getDisplayName(supabaseUser);
+      const provider = supabaseUser.app_metadata?.provider ?? 'unknown';
+
+      const { data: created, error: createError } = await supabase
+        .from('users')
+        .upsert(
+          {
+            id: supabaseUser.id,
+            display_name: displayName,
+            avatar_url: (supabaseUser.user_metadata as Record<string, unknown> | null)?.avatar_url ?? null,
+            provider,
+            role: 'user',
+            is_banned: false,
+          },
+          { onConflict: 'id' }
+        )
+        .select('*')
+        .single();
+
+      if (created) return created as User;
+      if (createError) console.error('Profile create error:', createError);
+    } catch (err) {
+      console.error('getOrCreateProfile error:', err);
+    }
+
+    // Fallback: construct a minimal profile from Supabase user metadata
+    // so the UI still renders (avatar, display name, sign-out)
+    return {
+      id: supabaseUser.id,
+      display_name: getDisplayName(supabaseUser),
+      avatar_url: ((supabaseUser.user_metadata as Record<string, unknown> | null)?.avatar_url as string) ?? null,
+      provider: supabaseUser.app_metadata?.provider ?? 'unknown',
+      role: 'user',
+      is_banned: false,
+      created_at: supabaseUser.created_at ?? new Date().toISOString(),
+    };
+  };
+
   // In mock mode, poll the mock auth API instead of using Supabase
   useEffect(() => {
     if (isMockMode) {
@@ -78,11 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (session?.user) {
           setUser(session.user);
-          const { data } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
+          const data = await getOrCreateProfile(supabase, session.user);
           if (data?.is_banned) {
             await supabase.auth.signOut();
             setUser(null);
@@ -108,11 +169,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        const { data } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
+        const data = await getOrCreateProfile(supabase, session.user);
         if (data?.is_banned) {
           await supabase.auth.signOut();
           setUser(null);
