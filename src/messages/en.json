@@ -13,7 +13,8 @@
   },
   "Navbar": {
     "brandName": "Slop Museum",
-    "submit": "Submit"
+    "submit": "Submit",
+    "signOutFallback": "Sign out"
   },
   "Login": {
     "signIn": "Sign In",

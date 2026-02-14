@@ -15,6 +15,16 @@ export function Navbar() {
   const { user, loading } = useAuth();
   const t = useTranslations('Navbar');
 
+  const handleEmergencySignOut = async () => {
+    try {
+      await fetch('/auth/signout', { method: 'POST' });
+    } catch (error) {
+      console.error('Emergency sign out failed:', error);
+    } finally {
+      window.location.href = '/';
+    }
+  };
+
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between mx-auto px-4">
@@ -38,6 +48,9 @@ export function Navbar() {
                 </Link>
               </Button>
               <UserMenu />
+              <Button variant="ghost" size="sm" onClick={handleEmergencySignOut}>
+                {t('signOutFallback')}
+              </Button>
             </>
           ) : (
             <LoginButton />

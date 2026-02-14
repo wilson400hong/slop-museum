@@ -130,9 +130,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // Real Supabase auth flow
-    if (!supabaseRef.current) {
-      supabaseRef.current = createClient();
+    try {
+      if (!supabaseRef.current) {
+        supabaseRef.current = createClient();
+      }
+    } catch (error) {
+      console.error('Failed to initialize Supabase client:', error);
+      setLoading(false);
+      return;
     }
+
     const supabase = supabaseRef.current;
 
     const getUser = async () => {

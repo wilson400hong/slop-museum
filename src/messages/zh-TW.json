@@ -13,7 +13,8 @@
   },
   "Navbar": {
     "brandName": "雜燴博物館",
-    "submit": "提交作品"
+    "submit": "提交作品",
+    "signOutFallback": "登出"
   },
   "Login": {
     "signIn": "登入",
